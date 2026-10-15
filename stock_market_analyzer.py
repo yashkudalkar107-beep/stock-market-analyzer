@@ -196,7 +196,12 @@ def run_model(prices: pd.DataFrame, m: dict) -> None:
     X_train, y_train = train[features], train["target"]
     X_test, y_test = test[features], test["target"]
 
-    baseline = max(y_test.mean(), 1 - y_test.mean())
+    # Determine the majority class using training data only.
+    majority_class = int(y_train.mode().iloc[0])
+
+    # Evaluate the baseline on unseen test data.
+    baseline_pred = np.full(len(y_test), majority_class, dtype=int)
+    baseline = accuracy_score(y_test, baseline_pred)
     print("=" * 60)
     print("NEXT-DAY DIRECTION PREDICTION")
     print("=" * 60)
